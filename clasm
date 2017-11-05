@@ -1,0 +1,68 @@
+#!/bin/bash
+
+ARCHITECTURES="arm thumb aarch64 x86 x64"
+
+set -e
+
+trap 'rm -f ${TMPFILE} ${DISTMPFILE}' EXIT
+
+if [ "$1" = "--install" ] ; then
+    [ -n "$2" ] && set -- "$1" "${2}/"
+    for arch in ${ARCHITECTURES} ; do 
+        ln -s $0 ${2}clasm-${arch} || true
+        ln -s $0 ${2}clasm-dis-${arch} || true
+    done
+    exit
+fi
+
+[ -n "$1" ] && { $0 ; exit ; } <<EOM
+$*
+EOM
+
+case $0 in
+    *-arm)
+        AFLAGS="-target armv7a-none-linux-android"
+        ODFLAGS=""
+        PREAMBLE="
+.syntax unified
+.arm
+"
+        ;;
+    *-thumb)
+        AFLAGS="-target armv7a-none-linux-android"
+        ODFLAGS="-arch-name thumb"
+        PREAMBLE="
+.syntax unified
+.thumb
+"
+        ;;
+    *-x64)
+        AFLAGS="-target x86_64"
+        ;;
+    *)
+        AFLAGS="-target ${0##*-}"
+        ;;
+esac
+
+case $0 in
+    *-dis-*)
+        DISTMPFILE=`mktemp -p ~`
+        sed -r 's/0x(..)(..)\b/\2\1/g' |
+        sed -r 's/0x(..)(..)(..)(..)/0x\4\3\2\1/g' |
+        sed -r 's/0x//g' |
+        sed -r 's/[[:space:]]//g' | xxd -r -ps > ${DISTMPFILE}
+        ;;
+esac
+
+TMPFILE=`mktemp -p ~`
+(
+cat <<EOM
+${PREAMBLE}
+here:
+EOM
+[ -n "${DISTMPFILE}" ] && echo ".incbin \"${DISTMPFILE}\"" || cat
+) |
+clang -c -x assembler - ${AFLAGS} -o ${TMPFILE}
+
+llvm-objdump ${ODFLAGS} -D ${TMPFILE} -j .text | grep -m 1 -A 1000000 '^       0:' 
+
