@@ -63,6 +63,6 @@ EOM
 [ -n "${DISTMPFILE}" ] && echo ".incbin \"${DISTMPFILE}\"" || cat
 ) |
 clang -c -x assembler - ${AFLAGS} -o ${TMPFILE}
-
+strip -s ${TMPFILE}
 llvm-objdump ${ODFLAGS} -D ${TMPFILE} -j .text | grep -m 1 -A 1000000 '^       0:' 
 
