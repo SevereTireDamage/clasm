@@ -1,4 +1,33 @@
 #!/bin/bash
+#
+# clasm is a wrapper around clang for quick assembly and disassembly of
+# multiple architectures from the command line.
+#
+# clasm determines the architecture based on the name it's invoked with.
+#
+# clasm is flexible about using stdin or argv!
+#
+# EXAMPLE
+#
+# clasm --install /path/to/binaries/
+#
+# $ ./clasm-aarch64 mov x0, 0
+#        0:   00 00 80 d2     movz    x0, #0
+#
+# $ cat | ./clasm-aarch64 
+# mov x0, 0
+# mov x1, 1
+#       0:   00 00 80 d2     movz    x0, #0
+#       4:   21 00 80 d2     movz    x1, #0x1
+#
+# $ ./clasm-dis-aarch64 0xd2800021
+#       0:   21 00 80 d2     movz    x1, #0x1
+#
+# $ ./clasm-dis-aarch64 000080d2000080d2
+#       0:   00 00 80 d2     movz    x0, #0
+#       4:   00 00 80 d2     movz    x0, #0
+#
+
 
 ARCHITECTURES="arm thumb aarch64 x86 x64"
 
