@@ -9,8 +9,8 @@ trap 'rm -f ${TMPFILE} ${DISTMPFILE}' EXIT
 if [ "$1" = "--install" ] ; then
     [ -n "$2" ] && set -- "$1" "${2}/"
     for arch in ${ARCHITECTURES} ; do 
-        ln -s $0 ${2}clasm-${arch} || true
-        ln -s $0 ${2}clasm-dis-${arch} || true
+        ln -sf $0 ${2}clasm-${arch} || true
+        ln -sf $0 ${2}clasm-dis-${arch} || true
     done
     exit
 fi
