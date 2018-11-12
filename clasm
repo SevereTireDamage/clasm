@@ -59,11 +59,16 @@ case $0 in
         ;;
     *-thumb)
         AFLAGS="-target armv7a-none-linux-android"
-        ODFLAGS="-arch-name thumb"
+        ODFLAGS="-triple thumb"
         PREAMBLE="
 .syntax unified
 .thumb
 "
+        ;;
+    *-aarch64)
+        # http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0774b/chr1392305424052.html
+        AFLAGS="-target aarch64-arm-none-eabi  -mcpu=cortex-a57+crypto+crc+fp+simd "
+        ODFLAGS="-triple=aarch64-arm-none-eabi -mcpu=cortex-a57"
         ;;
     *-x64)
         AFLAGS="-target x86_64"
