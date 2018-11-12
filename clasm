@@ -27,7 +27,19 @@
 #       0:   00 00 80 d2     movz    x0, #0
 #       4:   00 00 80 d2     movz    x0, #0
 #
-
+# $ ./clasm-dis-aarch64 1f081fd6
+#       0:	1f 08 1f d6 	braaz	x0
+#
+# CLANG NOTES
+#
+# To make llvm tell you what you can pass to -march:
+# $ llvm-objdump --version
+#
+# To make llvm tell you what you can pass to -mpcu and -mattr for arch xyz:
+# llvm-as < /dev/null | llc -march=xyz -mcpu=help
+#
+# Then stick all combinations of all of the above in all the flags until
+# you get what you want because who knows what it wants to see where.
 
 ARCHITECTURES="arm thumb aarch64 x86 x64"
 
@@ -67,7 +79,8 @@ case $0 in
         ;;
     *-aarch64)
         # http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0774b/chr1392305424052.html
-        AFLAGS="-target aarch64-arm-none-eabi  -mcpu=cortex-a57+crypto+crc+fp+simd "
+        # https://llvm.org/docs/CommandGuide/llc.html
+        AFLAGS="-target aarch64-arm-none-eabi  -mcpu=cortex-a57+crypto+crc+fp+simd -march=armv8.3a"
         ODFLAGS="-triple=aarch64-arm-none-eabi -mcpu=cortex-a57"
         ;;
     *-x64)
