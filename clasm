@@ -81,7 +81,7 @@ case $0 in
         # http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0774b/chr1392305424052.html
         # https://llvm.org/docs/CommandGuide/llc.html
         AFLAGS="-target aarch64-arm-none-eabi  -mcpu=cortex-a57+crypto+crc+fp+simd -march=armv8.3a"
-        ODFLAGS="-triple=aarch64-arm-none-eabi -mcpu=cortex-a57"
+        ODFLAGS="-triple=aarch64-arm-none-eabi -mcpu=cortex-a57 -mattr=+v8.3a"
         ;;
     *-x64)
         AFLAGS="-target x86_64"
